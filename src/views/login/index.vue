@@ -67,7 +67,7 @@
 
 <script>
 import { validMobile } from "@/utils/validate";
-
+import { mapActions } from 'vuex';
 export default {
   name: "Login",
   data() {
@@ -103,6 +103,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["user/loginAction"]),
     showPwd() {
       if (this.passwordType === "password") {
         this.passwordType = "";
@@ -114,23 +115,46 @@ export default {
       });
     },
     handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.loading = true;
-          this.$store
-            .dispatch("user/login", this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-        } else {
-          console.log("error submit!!");
-          return false;
+      this.$refs.loginForm.validate( async (isOK) => {
+        if (isOK) {
+          this.loading = true
+          try {
+              await this['user/loginAction'](this.loginForm)
+              // async 函数默认返回的是 promise 对象
+              // await 下面的代码异步执行 , 必须会等到上面的 await 成功材执行
+              // 因为在响应拦截器中会 reject , 所以用 try catch
+              this.$router.push("/")
+          } catch (error) {
+            console.log(error)
+            // 这里没必又要弹出提示框 , 因为在响应拦截器里面已经都处理过
+          } finally {
+            // 最后都去把按钮的 loading 设为 false
+            this.loading = false
+          }
         }
-      });
+      })
+
+
+
+
+
+      // this.$refs.loginForm.validate((valid) => {
+      //   if (valid) {
+      //     this.loading = true;
+      //     this.$store
+      //       .dispatch("user/loginAction", this.loginForm)
+      //       .then(() => {
+      //         this.$router.push({ path: this.redirect || "/" });
+      //         this.loading = false;
+      //       })
+      //       .catch(() => {
+      //         this.loading = false;
+      //       });
+      //   } else {
+      //     console.log("error submit!!");
+      //     return false;
+      //   }
+      // });
     },
   },
 };

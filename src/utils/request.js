@@ -85,7 +85,33 @@
 // export default service
 
 import axios from 'axios'
-const service = axios.create()   // 创建一个axios的实例
-service.interceptors.request.use() // 请求拦截器
-service.interceptors.response.use() // 响应拦截器
-export default service // 导出axios实例
+import { Message } from 'element-ui';
+
+const service = axios.create({
+  // 当执行 npm run dev  => .env.development => /api 跨域代理
+  baseURL: process.env.VUE_APP_BASE_API,  //  /api
+  timeout:5000   // 设置超时时间
+})
+
+service.interceptors.request.use((config) => {
+  return config
+}, (err) => {
+  console.log(err)
+})
+
+// 响应拦截器
+service.interceptors.response.use((res) => {
+  // axios 默认加了一层 data
+  const { success, message, data } = res.data
+  if (success) {
+    return data
+  } else {
+    // 返回的数据中 success 已经 false了 , 应该进 catch
+    Message.error(message) // 提示错误信息
+    return Promise.reject(new Error(message))
+  }
+}, (err) => {
+  Message.error(err.message)  // 提示错误信息
+  return Promise.reject(err) // 返回执行错误 让当前的执行链跳出成功 直接进入 catch
+})
+export default service
