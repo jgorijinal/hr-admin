@@ -1,27 +1,15 @@
-// import Cookies from 'js-cookie'
+import Cookies from 'js-cookie'
 
-// const TokenKey = 'vue_admin_template_token'
+const TokenKey = 'vue-admin-token'   // 设定独一无二的 key
 
-// export function getToken() {
-//   return Cookies.get(TokenKey)
-// }
-
-// export function setToken(token) {
-//   return Cookies.set(TokenKey, token)
-// }
-
-// export function removeToken() {
-//   return Cookies.remove(TokenKey)
-// }
-
-export function login(data) {
-
+export function getToken() {
+  return Cookies.get(TokenKey)
 }
 
-export function getInfo(token) {
-
+export function setToken(token) {
+  return Cookies.set(TokenKey, token)
 }
 
-export function logout() {
-
+export function removeToken() {
+  return Cookies.remove(TokenKey)
 }

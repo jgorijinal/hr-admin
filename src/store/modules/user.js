@@ -88,9 +88,47 @@
 //   }
 // }
 
+
+import { login } from '@/api/user'
+import { getToken, removeToken, setToken } from '@/utils/auth'
+// 状态
+// 初始化的时候从缓存中读取状态 并赋值到初始化的状态上
+// Vuex 的持久化 如何实现 ？ Vuex 和前端缓存相结合
+const state = {
+  token:getToken()  // 设置token为贡献该状态 ,初始化 Vuex 的时候, 先从缓存中获取
+}
+
+const mutations = {
+  changeToken(state, token) {
+    // 改变 state中的 token
+    state.token = token
+    // 再同步给缓存
+    setToken(token)
+  },
+  removeToken(state) {
+    // 置空 state 中的 token
+    state.token = null
+    // 再同步删除缓存
+    removeToken()
+  }
+}
+
+const actions = {
+  async loginAction(context, data) {
+    const result = await login(data)
+    // axios请求返回的固定格式的数据, 真正的数据在.data里面
+    if (result.data.success) {
+      // 表示登录接口调用成功 也就是意味着你的用户名和密码是正确的
+      // 现在有用户token
+      // actions 修改state 必须通过mutations
+      context.commit("setToken", result.data.data)
+    }
+  }
+}
+
 export default {
   namespaced: true,
-  state: {},
-  mutations: {},
-  actions: {}
+  state,
+  mutations,
+  actions
 }
