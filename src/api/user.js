@@ -25,6 +25,7 @@
 
 import request from "@/utils/request"
 
+// 登录接口
 export function login(data) {
   // 返回 Promise 对象
   return request({
@@ -33,6 +34,16 @@ export function login(data) {
     data:data
   })
 }
+
+// 获取用户资料接口
+export function getUserInfo(){
+  return request({
+    url: "/sys/profile",
+    method:"post"
+  })
+}
+
+
 
 
 

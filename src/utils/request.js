@@ -86,6 +86,7 @@
 
 import axios from 'axios'
 import { Message } from 'element-ui';
+import store from "@/store"
 
 const service = axios.create({
   // 当执行 npm run dev  => .env.development => /api 跨域代理
@@ -93,13 +94,20 @@ const service = axios.create({
   timeout:5000   // 设置超时时间
 })
 
+// 1. 请求拦截器
 service.interceptors.request.use((config) => {
-  return config
+  // 在这个位置需要统一的去注入 token
+  if (store.getters.token) {
+    config.headers['Authorization'] = `Bearer ${store.getters.token}`  // 中间有空格
+  }
+  return config   // 必须要 return
 }, (err) => {
-  console.log(err)
+  return Promise.reject(err)
 })
 
-// 响应拦截器
+
+
+// 2. 响应拦截器
 service.interceptors.response.use((res) => {
   // axios 默认加了一层 data
   const { success, message, data } = res.data
