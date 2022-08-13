@@ -20,7 +20,7 @@ service.interceptors.request.use((config) => {
       // 如果它为true表示 过期了
       // token没用了 因为超时了
       router.push('/login')   // 跳到主页
-      return Promise.reject(new Error('token超时了'))
+      return Promise.reject(new Error('token 超时了'))
     }
     config.headers['Authorization'] = `Bearer ${store.getters.token}`  // 中间有空格
   }
@@ -57,7 +57,7 @@ service.interceptors.response.use((res) => {
 function checkTimeout() {
   const currentTime = Date.now()
   const timestamp = getTimestamp()
-  return (currentTime - timestamp) /1000 > Timeout
+  return (currentTime - timestamp) / 1000 > Timeout
 }
 
 export default service
