@@ -14,8 +14,8 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="@/assets/common/bigUserHeader.png" class="user-avatar" />
-          <span class="name">管理员</span>
+          <img v-imageError="defaultImage"  :src="staffPhoto" class="user-avatar" />
+          <span class="name">{{name}}</span>
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -39,24 +39,27 @@
 
 <script>
 import { mapGetters } from "vuex";
-// import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from "@/components/Hamburger";
 
 export default {
   components: {
-    // Breadcrumb,
     Hamburger,
   },
+  data() {
+    return {
+      defaultImage: require("@/assets/common/bigUserHeader.png")
+    }
+  },
   computed: {
-    ...mapGetters(["sidebar", "avatar"]),
+    ...mapGetters(["sidebar", "avatar", "name", "staffPhoto"]),
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
     async logout() {
-      await this.$store.dispatch("user/logout");
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+      await this.$store.dispatch("user/logoutAction");   // 这里加不加 await都无所谓,因为 action 里面能实现都是同步的代码
+      this.$router.push('/login');  // 调到登录页
     },
   },
 };

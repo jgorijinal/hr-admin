@@ -88,8 +88,8 @@
 //   }
 // }
 
-import { login , getUserInfo} from "@/api/user";
-import { getToken, removeToken, setToken } from "@/utils/auth";
+import { login , getUserInfo , getUserDetailById} from "@/api/user";
+import { getToken, removeToken, setToken ,setTimestamp} from "@/utils/auth";
 // 状态
 // 初始化的时候从缓存中读取状态 并赋值到初始化的状态上
 // Vuex 的持久化 如何实现 ？ Vuex 和前端缓存相结合
@@ -125,12 +125,23 @@ const actions = {
   async loginAction(context, data) {
     const result = await login(data);
     context.commit("changeToken", result);
+
+    // 写入时间戳
+    setTimestamp() // 将当前的最新时间写入缓存
   },
 
   async getUserInfoAction(context) {
-    const result = await getUserInfo()       // 调戒恶口获取返回值
-    context.commit("changeUserInfo", result) // 提交 mutation 更改 state 数据
+    const result = await getUserInfo()       // 用户的基本交资料
+    const userDetail = await getUserDetailById(result.userId) // 用户详情资料(为了获取头像)
+    const baseResult = {...result , ...userDetail}   // 将两个接口结果合并
+    context.commit("changeUserInfo", baseResult)   // 提交 mutation 更改 state 数据
+
     return result         // 这里为什么艺return ??  这里后期做权限的时候埋下伏笔
+  },
+
+  logoutAction(context) {
+    context.commit("removeToken")     // 删除 token
+    context.commit("removeUserInfo")  // 删除 用户资料
   }
 };
 

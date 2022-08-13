@@ -35,11 +35,19 @@ export function login(data) {
   })
 }
 
-// 获取用户资料接口
+// 获取用户基本资料接口
 export function getUserInfo(){
   return request({
     url: "/sys/profile",
     method:"post"
+  })
+}
+
+// 获取用户详情资料( 为了获取头像 )接口
+export function getUserDetailById(id) {
+  return request({
+    url: `/sys/user/${id}`
+    // method 默认为 get , 所以不用写
   })
 }
 
