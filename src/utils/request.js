@@ -3,6 +3,7 @@ import { Message } from 'element-ui';
 import store from "@/store"
 import { getTimestamp } from './auth';
 const Timeout = 3600 // 定义超时时间
+import router from '@/router'
 
 const service = axios.create({
   // 当执行 npm run dev  => .env.development => /api 跨域代理
@@ -42,7 +43,7 @@ service.interceptors.response.use((res) => {
   }
 }, (err) => {
    // error 信息 里面 response的对象
-  if (error.response && error.response.data && error.response.data.code === 10002) {
+  if (err.response && err.response.data && err.response.data.code === 10002) {
     // 当等于10002的时候 表示 后端告诉我token超时了
     store.dispatch('user/logoutAction') // 登出 action 删除 token
     router.push('/login')

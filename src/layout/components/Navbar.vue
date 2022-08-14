@@ -62,6 +62,9 @@ export default {
       this.$router.push('/login');  // 调到登录页
     },
   },
+  mounted() {
+    console.log(this.staffPhoto)
+  }
 };
 </script>
 
