@@ -1,8 +1,8 @@
 <template>
   <!--新增部门 弹窗-->
-  <el-dialog title="新增部门" :visible="showDialog">
+  <el-dialog title="新增部门" :visible="showDialog" destroy-on-close @close="btnCancel">
     <!--表单数据-->
-    <el-form label-width="120px" :rules="rules" :model="formData">
+    <el-form label-width="120px" :rules="rules" :model="formData" ref="formRef">
       <el-form-item label="部门名称" prop="name">
         <el-input
           style="width: 80%"
@@ -38,13 +38,13 @@
         ></el-input>
       </el-form-item>
     </el-form>
-    <!-- el-dialog有专门放置底部操作栏的 插槽  具名插槽 -->
+    <!-- el-dialog有专门放置底部操作栏的 插槽 具名插槽 -->
     <!--确定, 取消按钮-->
     <template slot="footer">
       <el-row type="flex" justify="center">
         <el-col :span="6">
-          <el-button>取消</el-button>
-          <el-button type="primary">确定</el-button>
+          <el-button @click="btnCancel">取消</el-button>
+          <el-button type="primary" @click="btnOK">确定</el-button>
         </el-col>
       </el-row>
     </template>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { getDepartments } from "@/api/departments"
+import { getDepartments, addDepartment } from "@/api/departments"
 import { getEmployeeSimple } from '@/api/employees';
 
 export default {
@@ -78,7 +78,6 @@ export default {
       console.log(isRepeat)
       isRepeat ? callback(new Error(`同级部门下已经存在${value}的部门了`)) : callback()
     }
-
     // 检查编码重复
     const checkCodeRepeat = async(rule, value, callback) => {
       // 先要获取最新的组织架构数据
@@ -118,21 +117,25 @@ export default {
     async getEmployeeSimple() {
       const result = await getEmployeeSimple()
       this.people = result
+    },
+    btnOK() {
+      this.$refs.formRef.validate( async (isOK) => {
+        if (isOK) {
+          // 校验通过 , 调用新增接口
+          await addDepartment({ ...this.formData, pid: this.treeNode.id })
+          // 通知父组件, 更新数据
+          this.$emit("addDept")
+          // 关闭弹窗 , 用了 .sync 修饰符
+          this.$emit("update:showDialog" , false)
+        }
+      })
+    },
+    btnCancel() {
+      this.$emit("update:showDialog", false)  // 关闭弹窗
+      this.$refs.formRef.resetFields()  // 重置校验字段
     }
   }
 };
 </script>
 
 <style></style>
-
-<!--checkNameRepeat 函数的升级版-->
-     <!-- const result = await getDepartments()
-      const { depts } = result
-      console.log(this.treeNode)
-      if (this.treeNode.manager === "负责人") {
-        const isRepeat = depts.filter(item => item.pid === "").some(item => item.name === value)
-        isRepeat ? callback(new Error(`部门下已经存在${value}, 请重新输入`)) : callback()
-      } else {
-        const isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
-        isRepeat ? callback(new Error(`部门下已经存在${value}, 请重新输入`)) : callback()
-      } -->
