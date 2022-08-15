@@ -16,11 +16,12 @@
               :tree-node="data"
               @delDepts="getDepartments"
               @addDept = "addDepartment"
+              @editDept = "editDepartment"
             ></tree-tools>
           </template>
         </el-tree>
       </el-card>
-      <add-dept :showDialog.sync="showDialog" :tree-node="node" @addDept="getDepartments"/>
+      <add-dept ref="addDeptRef" :showDialog.sync="showDialog" :tree-node="node" @addDept="getDepartments"/>
     </div>
   </div>
 </template>
@@ -61,9 +62,15 @@ export default {
     addDepartment(node) {
       this.showDialog = true  //  显示弹层
       this.node = node  // 因为 node 是当前的点击的部门， 此时这个部门应该记录下来
+    },
+    editDepartment(node) {
+      this.showDialog = true  // 弹窗显示
+      this.node = node   // 记录节点
+
+      this.$refs.addDeptRef.getDepartDetail(node.id) // 直接调入子组件的方法 传入id
     }
   },
-};
+};1
 </script>
 
 <style lang="scss" scoped>

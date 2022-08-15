@@ -56,9 +56,10 @@ export default {
       if (command === "add") {
          // 添加子部门的操作
         // 告诉父组件 显示弹层
-        this.$emit("addDept" , this.treeNode) // 为何传出treeNode 因为是添加子部门 需要当前部门的数据 
+        this.$emit("addDept" , this.treeNode) // 为何传出treeNode 因为是添加子部门 需要当前部门的数据
       } else if (command === "edit") {
         // 编辑时
+        this.$emit("editDept" , this.treeNode)
       } else if (command === "del") {
         this.$confirm("此操作将删除该部门数据, 是否继续?", {
           confirmButtonText: "确定",
