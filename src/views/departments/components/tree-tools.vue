@@ -54,7 +54,9 @@ export default {
     // 点击下拉菜单 删除, 编辑 , 新增时触发
     operateDepts(command) {
       if (command === "add") {
-        // 新增时
+         // 添加子部门的操作
+        // 告诉父组件 显示弹层
+        this.$emit("addDept" , this.treeNode) // 为何传出treeNode 因为是添加子部门 需要当前部门的数据 
       } else if (command === "edit") {
         // 编辑时
       } else if (command === "del") {
@@ -83,6 +85,6 @@ export default {
 
 <style lang="scss" scoped>
 .companyName {
-  font-weight: bolder;
+  font-weight: bold;
 }
 </style>

@@ -6,8 +6,6 @@ export function getDepartments() {
     url:'/company/department'
   })
 }
-
-
 /** *
  *  根据 id 根据部门  接口是根据 restful的规则设计的
  *  同样的地址 不同的方法 执行不同的业务
@@ -17,6 +15,15 @@ export function delDepartment(id) {
   return request({
     url: `/company/department/${id}`,
     method:'delete'
+  })
+}
+
+// 新增部门 接口
+export function addDepartment(data) {
+  return request({
+    url: '/company/department',
+    method: "post",
+    data
   })
 }
 
