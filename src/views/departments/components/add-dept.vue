@@ -18,12 +18,15 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
-        <el-input
+        <el-select
           style="width: 80%"
           placeholder="请选择"
-          type="select"
           v-model="formData.manager"
-        ></el-input>
+          @focus="getEmployeeSimple"
+        >
+          <el-option v-for="p in people" :key="p.id" :value="p.username" :label="p.username">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
         <el-input
@@ -50,13 +53,15 @@
 
 <script>
 import { getDepartments } from "@/api/departments"
+import { getEmployeeSimple } from '@/api/employees';
+
 export default {
   props: {
     showDialog: {
       type: Boolean,
       default: false,
     },
-    // 当前操作的节点 
+    // 当前操作的节点
     treeNode: {
       type: Object,
       required:true
@@ -106,8 +111,15 @@ export default {
           },
         ],
       },
+      people:[]
     };
   },
+  methods: {
+    async getEmployeeSimple() {
+      const result = await getEmployeeSimple()
+      this.people = result
+    }
+  }
 };
 </script>
 
