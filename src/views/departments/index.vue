@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container" v-loading="loading">
     <div class="app-container">
       <!--组织架构-->
       <el-card class="tree-card" >
@@ -46,7 +46,8 @@ export default {
         children: "children",
       },
       showDialog: false,
-      node: {}
+      node: {},
+      loading:false
     };
   },
   created() {
@@ -54,10 +55,12 @@ export default {
   },
   methods: {
     async getDepartments() {
+      this.loading = true
       const result = await getDepartments();
       console.log(result)
       this.company = { name: result.companyName, manager: "负责人" ,id:""};
       this.departs = transListToTree(result.depts, ""); // 需要将其转化成树形结构
+      this.loading = false
     },
     addDepartment(node) {
       this.showDialog = true  //  显示弹层
