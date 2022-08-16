@@ -1,20 +1,30 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">name: {{ name }}</div>
+    <page-tools :show-before="true">
+      <template #before>
+        hello
+      </template>
+      <template #after>
+        world
+      </template>
+    </page-tools>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
+import PageTools from "@/components/PageTools/index.vue";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
+  components: {
+    PageTools,
+  },
   computed: {
-    ...mapGetters([
-      'name'
-    ])
-  }
-}
+    ...mapGetters(["name"]),
+  },
+};
 </script>
 
 <style lang="scss" scoped>

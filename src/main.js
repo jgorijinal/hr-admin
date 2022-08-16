@@ -12,6 +12,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import * as directives from '@/directives'
+import Component from '@/components'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -28,6 +29,9 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+// 自定义组件的注册
+Vue.use(Component)
 
 new Vue({
   el: '#app',
