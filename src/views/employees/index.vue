@@ -19,11 +19,21 @@
           <el-table-column label="姓名" prop="username" sortable=""></el-table-column>
           <el-table-column label="手机号" prop="mobile" sortable=""></el-table-column>
           <el-table-column label="工号" prop="workNumber" sortable=""></el-table-column>
-          <el-table-column label="聘用形势" prop="formOfEmployment" sortable=""></el-table-column>
+          <el-table-column label="聘用形势" prop="formOfEmployment" sortable="" :formatter="formatEmployment"></el-table-column>
           <el-table-column label="部门" prop="departmentName" sortable=""></el-table-column>
-          <el-table-column label="入职时间" prop="timeOfEntry" sortable=""></el-table-column>
-          <el-table-column label="是否在职" prop="inServiceStatus" sortable=""></el-table-column>
-          <el-table-column label="状态" prop="enableState" sortable=""></el-table-column>
+          <el-table-column label="入职时间" prop="timeOfEntry" sortable="">
+            <template slot-scope="obj">
+              {{
+                obj.row.timeOfEntry | formatDate
+              }}
+            </template>
+          </el-table-column>
+          <el-table-column label="是否在职" prop="inServiceStatus" sortable="" :formatter="formatInServiceStatus"></el-table-column>
+          <el-table-column label="状态" prop="enableState" sortable="" align="center">
+            <template #default="scope">
+              <el-switch :value="scope.row.enableState === 1" disabled></el-switch>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" fixed="right" width="280">
             <el-button type="text">查看</el-button>
             <el-button type="text">转正</el-button>
@@ -44,6 +54,8 @@
 
 <script>
 import { getEmployeeList } from "@/api/employees.js"
+import EmployeeEnum from "@/api/constant/employees.js"  // 枚举对象
+
 export default {
   data() {
     return {
@@ -68,7 +80,17 @@ export default {
     async currentChange(currentPage) {
       this.pageInfo.page = currentPage
       await this.getEmployeeList()
-    }
+    },
+    formatEmployment(row, column, cellValue, index) {
+      // 去找 1或2 对应的值
+      const obj = EmployeeEnum.hireType.find(item => item.id === cellValue)
+      return obj ? obj.value : '未知'
+    },
+    formatInServiceStatus(row, column, cellValue, index) {
+      // 去找 1 或 2 对应的值
+      const obj = EmployeeEnum.workingState.find(item => item.id === cellValue.toString())
+      return obj ? obj.value : '未知'
+    },
   },
   created() {
     this.getEmployeeList()
