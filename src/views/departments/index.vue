@@ -5,7 +5,7 @@
       <el-card class="tree-card" >
         <template #header>
           <tree-tools :tree-node="company" :isRoot="true" @addDept="addDepartment"></tree-tools>
-        </template>.
+        </template>
         <el-tree
           :data="departs"
           :props="defaultProps"
@@ -58,7 +58,7 @@ export default {
       this.loading = true
       const result = await getDepartments();
       console.log(result)
-      this.company = { name: result.companyName, manager: "负责人" ,id:""};
+      this.company = { name: '艾伦科技有限公司', manager: "负责人" ,id:""};
       this.departs = transListToTree(result.depts, ""); // 需要将其转化成树形结构
       this.loading = false
     },

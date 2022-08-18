@@ -9,7 +9,7 @@
         <template #after>
           <el-button size="small" type="success">excel导入</el-button>
           <el-button size="small" type="success">excel导出</el-button>
-          <el-button size="small" type="primary" icon="">新增员工</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus" @click="showDialog = true">新增员工</el-button>
         </template>
       </page-tools>
       <!--表格-->
@@ -100,14 +100,21 @@
         </el-row>
       </el-card>
     </div>
+    <!-- 弹窗 -->
+    <!-- 子组件改变父组件数据的语法糖 子组件里 this.$emit("update:showDialog" , false) -->
+    <add-employee :show-dialog.sync="showDialog"></add-employee>
   </div>
 </template>
 
 <script>
 import { getEmployeeList , delEmployee } from "@/api/employees.js";
 import EmployeeEnum from "@/api/constant/employees.js"; // 枚举对象
+import AddEmployee from "./components/add-employee.vue"
 
 export default {
+  components: {
+    AddEmployee
+  },
   data() {
     return {
       list: [], // 列表数据 , 初始化值必须是 空数组[],
@@ -117,6 +124,7 @@ export default {
         size: 10, // 每页条数
       },
       total: 0, // 总数
+      showDialog:false
     };
   },
   methods: {
@@ -140,10 +148,13 @@ export default {
     },
     formatInServiceStatus(row, column, cellValue, index) {
       // 去找 1 或 2 对应的值
-      const obj = EmployeeEnum.workingState.find(
-        (item) => item.id === cellValue.toString()
+      if (cellValue) {
+        const obj = EmployeeEnum.workingState.find(
+        (item) => item.id === cellValue.toString()      ////////////
       );
       return obj ? obj.value : "未知";
+      }
+
     },
     async delEmployee(id) {  // 删除员工
       try {

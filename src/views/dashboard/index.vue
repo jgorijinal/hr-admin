@@ -1,14 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">name: {{ name }}</div>
-    <page-tools :show-before="true">
-      <template #before>
-        hello
-      </template>
-      <template #after>
-        world
-      </template>
-    </page-tools>
+    <upload-excel />
   </div>
 </template>
 
