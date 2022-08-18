@@ -7,9 +7,20 @@
           <span>共有{{ total }}条数据</span>
         </template>
         <template #after>
-          <el-button size="small" type="success" @click="$router.push('/import?type=user')">excel导入</el-button>
-          <el-button size="small" type="success">excel导出</el-button>
-          <el-button size="small" type="primary" icon="el-icon-plus" @click="showDialog = true">新增员工</el-button>
+          <el-button
+            size="small"
+            type="success"
+            @click="$router.push('/import?type=user')"
+            >excel导入</el-button
+          >
+          <el-button size="small" type="success" @click="exportData">excel导出</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            icon="el-icon-plus"
+            @click="showDialog = true"
+            >新增员工</el-button
+          >
         </template>
       </page-tools>
       <!--表格-->
@@ -107,13 +118,14 @@
 </template>
 
 <script>
-import { getEmployeeList , delEmployee } from "@/api/employees.js";
+import { getEmployeeList, delEmployee } from "@/api/employees.js";
 import EmployeeEnum from "@/api/constant/employees.js"; // 枚举对象
-import AddEmployee from "./components/add-employee.vue"
+import AddEmployee from "./components/add-employee.vue";
+import { formatDate } from '@/filters';
 
 export default {
   components: {
-    AddEmployee
+    AddEmployee,
   },
   data() {
     return {
@@ -124,7 +136,7 @@ export default {
         size: 10, // 每页条数
       },
       total: 0, // 总数
-      showDialog:false
+      showDialog: false,
     };
   },
   methods: {
@@ -136,6 +148,7 @@ export default {
       this.list = rows;
       this.total = total;
       this.loading = false;
+      console.log(result);
     },
     async currentChange(currentPage) {
       this.pageInfo.page = currentPage;
@@ -150,21 +163,62 @@ export default {
       // 去找 1 或 2 对应的值
       if (cellValue) {
         const obj = EmployeeEnum.workingState.find(
-        (item) => item.id === cellValue.toString()      ////////////
-      );
-      return obj ? obj.value : "未知";
+          (item) => item.id === cellValue.toString() ////////////
+        );
+        return obj ? obj.value : "未知";
       }
-
     },
-    async delEmployee(id) {  // 删除员工
+    async delEmployee(id) {
+      // 删除员工
       try {
-        await this.$confirm("确定要删除此员工吗?")
-        await delEmployee(id)               // 调删除接口 , 会等到上面的 await 成功
-        this.$message.success("操作成功")    // 提示成功
-        this.getEmployeeList()              // 重新拉取数据
-      } catch (err) {         // 如果点击了 取消键 会来这儿捕获 cancel
-        console.log("cancel")
+        await this.$confirm("确定要删除此员工吗?");
+        await delEmployee(id); // 调删除接口 , 会等到上面的 await 成功
+        this.$message.success("操作成功"); // 提示成功
+        this.getEmployeeList(); // 重新拉取数据
+      } catch (err) {
+        // 如果点击了 取消键 会来这儿捕获 cancel
+        console.log("cancel");
       }
+    },
+    async exportData() {  // 导出 excel
+      // 分析 : header 从哪里来 , data 从哪里来
+      // 还有现在没有接口获取所有的数据 , 想办法获取所有数据
+      const headers = {
+        '手机号': 'mobile',
+        '姓名': 'username',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      const { rows } = await getEmployeeList({ page: 1, size: this.total })
+      const data = this.formatJson(headers, rows)
+      const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+      const merges = ['A1:A2', 'B1:F1', 'G1:G2']
+      import("@/vendor/Export2Excel").then((excel) => {
+        excel.export_json_to_excel({
+          header: Object.keys(headers), // [] 数组
+          data,       // [[] , [] ,[]....]
+          multiHeader,
+          merges
+        });
+      });
+    },
+    formatJson(headers, rows) {  // 得到 data 数据结构  :  [{},{}]  ->  [[],[]]
+      return rows.map(obj => {
+        return Object.keys(headers).map(item => {
+              // 时间格式话处理
+          if (headers[item] === "timeOfEntry" || headers[item] === "correctionTime") {
+              return formatDate(obj[headers[item]])
+          } else if (headers[item] === "formOfEmployment") {
+              // 聘用形式字段处理
+              const target = EmployeeEnum.hireType.find(i => i.id === obj[headers[item]])
+              return target ? target.value : "未知"
+          }
+            return obj[headers[item]]
+          })
+      })
     }
   },
   created() {
