@@ -50,6 +50,7 @@ export default {
     generateData({ header, results }) {
       this.excelData.header = header;
       this.excelData.results = results;
+      console.log(this.onSuccess)
       this.onSuccess && this.onSuccess(this.excelData);
     },
     handleDrop(e) {

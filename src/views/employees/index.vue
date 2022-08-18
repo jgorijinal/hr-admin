@@ -7,7 +7,7 @@
           <span>共有{{ total }}条数据</span>
         </template>
         <template #after>
-          <el-button size="small" type="success">excel导入</el-button>
+          <el-button size="small" type="success" @click="$router.push('/import?type=user')">excel导入</el-button>
           <el-button size="small" type="success">excel导出</el-button>
           <el-button size="small" type="primary" icon="el-icon-plus" @click="showDialog = true">新增员工</el-button>
         </template>
