@@ -85,7 +85,7 @@
           </el-table-column>
           <el-table-column label="操作" fixed="right" width="280">
             <template v-slot="scope">
-              <el-button type="text">查看</el-button>
+              <el-button type="text" @click="$router.push(`/employees/detail/${scope.row.id}`)">查看</el-button>
               <el-button type="text">转正</el-button>
               <el-button type="text">调岗</el-button>
               <el-button type="text">离职</el-button>
