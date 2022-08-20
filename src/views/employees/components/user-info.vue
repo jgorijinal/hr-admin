@@ -58,7 +58,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
-
+            <image-upload ref="staffPhotoRef"></image-upload>
           </el-form-item>
         </el-col>
       </el-row>
@@ -86,9 +86,9 @@
         </el-form-item>
         <!-- 个人头像 -->
         <!-- 员工照片 -->
-
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <image-upload ref="myStaffPhotoRef"></image-upload>
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -357,21 +357,51 @@ export default {
     }
   },
   methods: {
-    async getPersonalDetail() {
-      this.formData = await getPersonalDetail(this.userId) // 获取员工数据
-    },
-    async savePersonal() {
-      await updatePersonal({ ...this.formData, id: this.userId })
-      this.$message.success('保存成功')
-    },
-    async saveUser() {
-    //  调用父组件
-      await saveUserDetailById(this.userInfo)
-      this.$message.success('保存成功')
-    },
     async getUserDetailById() {
       this.userInfo = await getUserDetailById(this.userId)
-    }
+      if (this.userInfo.staffPhoto) {
+        // 如果照片存在
+        // 这里赋值，同时需要给赋值的地址一个标记 upload: true
+        this.$refs.staffPhotoRef.fileList = [{ url: this.userInfo.staffPhoto , upload:true }]
+      }
+    },
+    async saveUser() {  // 点击保存信息
+      // 要检查 imageUpload组件内部 fileList 的 图片的 upload 状态是否为 true(有可能图片太大 ,还没上传完)
+      const fileList = this.$refs.staffPhotoRef.fileList
+      if (fileList.some(item => !item.upload)) {
+        this.$message.warning("当前图片还没有上传完成, 请稍后重试")
+        return true
+      }
+      // 通过合并得到新的对象 , 发请求
+      // 如果没有上传图片时要保存, 此时 fileList为空 , fileList.length 为 0
+      // 此时发请求时的staffPhoto 要填写 ' ' , 注意:里面要有一个空格! 接口的设定
+      await saveUserDetailById({...this.userInfo , staffPhoto:fileList && fileList.length > 0 ? fileList[0].url : ' '})
+      this.$message.success('保存成功')
+    },
+    async getPersonalDetail() {
+      this.formData = await getPersonalDetail(this.userId) // 获取员工数据
+      if (this.formData.staffPhoto) {
+        // 如果照片存在
+        // 这里赋值，同时需要给赋值的地址一个标记 upload: true
+        this.$refs.myStaffPhotoRef.fileList = [{url:this.formData.staffPhoto , upload:true}]
+      }
+    },
+    async savePersonal() {
+      // 要检查 imageUpload组件内部 fileList 的 图片的 upload 状态是否为 true(有可能图片太大 ,还没上传完)
+      const fileList = this.$refs.myStaffPhotoRef.fileList
+      if (fileList.some(item => !item.upload)) {
+        this.$message.warning("当前图片还没有上传完成 , 请稍后再试")
+        return true
+      }
+      // 通过合并得到新的对象 , 发请求
+      // 如果没有上传图片时要保存, 此时 fileList为空 , fileList.length 为 0
+      // 此时发请求时的staffPhoto 要填写 ' ' , 注意:里面要有一个空格! 接口的设定
+      await updatePersonal({
+        ...this.formData, id: this.userId,
+        staffPhoto: fileList && this.fileList.length > 0 ? fileList[0].url : ' '
+      })
+      this.$message.success('保存成功')
+    },
   },
   created() {
     this.getPersonalDetail()

@@ -107,7 +107,7 @@ export default {
           console.log(err || data);
           // data中有 statusCode === 200 的时候说明上传成功
           if (!err && data.statusCode === 200) {
-            this.fileList.map((item) => {
+            this.fileList = this.fileList.map((item) => {
               if (item.uid === this.currentFileUid) {
                 // 将成功的地址赋值给原来的url属性 , 前面要加 "http://"
                 return { url: "http://" + data.Location, upload: true };

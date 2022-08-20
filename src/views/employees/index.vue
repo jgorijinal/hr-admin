@@ -38,6 +38,21 @@
             prop="username"
             sortable=""
           ></el-table-column>
+          <el-table-column label="头像" sortable="" align="center">
+            <template v-slot="scope">
+                <el-avatar>
+                  <img v-if="scope.row.staffPhoto" :src="scope.row.staffPhoto" alt="" style="width: 100%;">
+                  <img v-else :src="require('@/assets/common/bigUserHeader.png')" alt="">
+                </el-avatar>
+                <!-- <img
+                slot="reference"
+                v-imageError="require('@/assets/common/bigUserHeader.png')"
+                :src="scope.row.staffPhoto"
+                style="border-radius: 50%; width: 80px; height: 80px; padding: 10px"
+                alt=""
+                -->
+            </template>
+          </el-table-column>
           <el-table-column
             label="手机号"
             prop="mobile"
@@ -219,6 +234,9 @@ export default {
             return obj[headers[item]]
           })
       })
+    },
+    errorHandler(event) {
+      console.log(event)
     }
   },
   created() {
