@@ -9,6 +9,10 @@
           </el-breadcrumb-item>
           <el-breadcrumb-item>打印</el-breadcrumb-item>
         </el-breadcrumb>
+        <!--vue-print-nb插件 :  v-print 指令实现打印功能-->
+        <el-row type="flex" justify="end">
+          <el-button v-print="printObj" size="small"  type="primary">打印</el-button>
+        </el-row>
         <div v-if="type === 'personal'">
           <h2 class="centInfo">员工信息表</h2>
           <table cellspacing="0" width="100%" class="tableList">
@@ -335,7 +339,10 @@ export default {
     return {
       type: this.$route.query.type,  // 打印类型
       userId: this.$route.params.id,
-      formData:{}
+      formData: {},
+      printObj: {
+        id: 'myPrint'
+      }
     }
   },
   // 创建完毕状态
