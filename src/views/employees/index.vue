@@ -38,11 +38,14 @@
             prop="username"
             sortable=""
           ></el-table-column>
-          <el-table-column label="头像" sortable="" align="center">
+          <el-table-column label="头像" sortable="" align="center" >
             <template v-slot="scope">
-                <el-avatar>
-                  <img v-if="scope.row.staffPhoto" :src="scope.row.staffPhoto" alt="" style="width: 100%;">
-                  <img v-else :src="require('@/assets/common/bigUserHeader.png')" alt="">
+                <el-avatar >
+                  <div @click="showQrCode(scope.row.staffPhoto)">
+                    <img v-if="scope.row.staffPhoto" :src="scope.row.staffPhoto" alt="" style="width: 100%;">
+                    <img v-else :src="require('@/assets/common/bigUserHeader.png')" alt="">
+                  </div>
+
                 </el-avatar>
                 <!-- <img
                 slot="reference"
@@ -129,6 +132,11 @@
     <!-- 弹窗 -->
     <!-- 子组件改变父组件数据的语法糖 子组件里 this.$emit("update:showDialog" , false) -->
     <add-employee :show-dialog.sync="showDialog"></add-employee>
+    <el-dialog title="图片二维码" :visible.sync="visible">
+      <el-row type="flex" justify="center">
+        <canvas ref="canvasRef"></canvas>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -137,6 +145,7 @@ import { getEmployeeList, delEmployee } from "@/api/employees.js";
 import EmployeeEnum from "@/api/constant/employees.js"; // 枚举对象
 import AddEmployee from "./components/add-employee.vue";
 import { formatDate } from '@/filters';
+import QrCode from "qrcode"
 
 export default {
   components: {
@@ -152,6 +161,7 @@ export default {
       },
       total: 0, // 总数
       showDialog: false,
+      visible:false // 二维码 dialog 显示隐藏
     };
   },
   methods: {
@@ -235,9 +245,19 @@ export default {
           })
       })
     },
-    errorHandler(event) {
-      console.log(event)
-    }
+    showQrCode(url) {  // 显示 图片二维码的弹窗
+      if (url) {
+          // 显示弹窗
+        this.visible = true
+        // 数据更新了 , 但页面的渲染师异步的, 还没创建 ref
+        this.$nextTick(() => {
+          // 此时可以确认已经有ref对象了
+          QrCode.toCanvas(this.$refs.canvasRef , url)
+        })
+      } else {
+        this.$message.error("该用户没有上传图片")
+      }
+    },
   },
   created() {
     this.getEmployeeList();

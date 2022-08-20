@@ -23,6 +23,15 @@ export default {
         title: "员工详情",
       },
     },
+    {
+      path: "print/:id",
+      component: () => import("@/views/employees/print.vue"),
+      hidden: true,
+      meta: {
+        title: '打印',  // 标记当前路由规则的中文名称 后续在做左侧菜单时 使用
+        icon:'people'
+      }
+    }
   ],
 };
 
