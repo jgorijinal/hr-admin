@@ -107,7 +107,7 @@
               <el-button type="text">转正</el-button>
               <el-button type="text">调岗</el-button>
               <el-button type="text">离职</el-button>
-              <el-button type="text">角色</el-button>
+              <el-button type="text" @click="editRole(scope.row.id)">角色</el-button>
               <el-button type="text" @click="delEmployee(scope.row.id)"
                 >删除</el-button
               >
@@ -129,7 +129,7 @@
         </el-row>
       </el-card>
     </div>
-    <!-- 弹窗 -->
+    <!-- 各种弹窗 -->
     <!-- 子组件改变父组件数据的语法糖 子组件里 this.$emit("update:showDialog" , false) -->
     <add-employee :show-dialog.sync="showDialog"></add-employee>
     <el-dialog title="图片二维码" :visible.sync="visible">
@@ -137,6 +137,7 @@
         <canvas ref="canvasRef"></canvas>
       </el-row>
     </el-dialog>
+    <assign-role ref="roleRef" :show-role-dialog.sync="showRoleDialog" :user-id="userId"></assign-role>
   </div>
 </template>
 
@@ -146,10 +147,12 @@ import EmployeeEnum from "@/api/constant/employees.js"; // 枚举对象
 import AddEmployee from "./components/add-employee.vue";
 import { formatDate } from '@/filters';
 import QrCode from "qrcode"
+import AssignRole from './components/assign-role.vue'
 
 export default {
   components: {
     AddEmployee,
+    AssignRole
   },
   data() {
     return {
@@ -161,7 +164,9 @@ export default {
       },
       total: 0, // 总数
       showDialog: false,
-      visible:false // 二维码 dialog 显示隐藏
+      visible: false, // 二维码 dialog 显示隐藏
+      showRoleDialog: false,  // 分配角色弹窗的 显示隐藏
+      userId:''   // 用户 id
     };
   },
   methods: {
@@ -258,6 +263,11 @@ export default {
         this.$message.error("该用户没有上传图片")
       }
     },
+    async editRole(id) {   // 编辑角色
+      this.userId = id
+      await this.$refs.roleRef.getUserDetailById(id)
+      this.showRoleDialog = true
+    }
   },
   created() {
     this.getEmployeeList();
