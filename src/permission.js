@@ -83,10 +83,25 @@ router.beforeEach(async(to, from, next) => {    // 前置守卫
     } else {
       // 如果没有id这个值 才会调用 vuex的获取资料的action
       if (!store.state.user.userInfo.userId) {
-        await store.dispatch("user/getUserInfoAction")
-         // 为什么要写await 因为我们想获取完资料再去放行
+        // 为什么要写 await 因为我们想获取完资料再去放行
+        // async 函数所return的内容 用 await就可以接收到 , 下面的 action函数里之前 return 了 userInfo
+        const { roles } = await store.dispatch("user/getUserInfoAction")
+
+        // 下面的 action中也在里面 return了 routes , 需要用 await 获取
+        const routes = await store.dispatch("permission/filterRoutes", roles.menus)
+        // routes就是筛选得到的动态路由
+
+        // 得到的动态路由 添加到 路由表
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }])
+
+        // 添加完动态路由之后
+        // addRoutes  必须 用 next(地址) 不能用 next()
+        next(to.path) // 相当于跳到对应的地址  相当于多做一次跳转 为什么要多做一次跳转
+        // 进门了，但是进门之后我要去的地方的路还没有铺好，直接走，掉坑里，多做一次跳转，
+        // 再从门外往里进一次，跳转之前 把路铺好，再次进来的时候，路就铺好了
+      } else {
+        next()                                // 否则直接放行
       }
-      next()                                // 否则直接放行
     }
   } else {
     // 没有 token                             // 如果没有 token

@@ -19,12 +19,14 @@ import Layout from '@/layout'
 export const constantRoutes = [
   {
     path: '/login',
+    name:'login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
 
   {
     path: '/404',
+    name:'404',
     component: () => import('@/views/404'),
     hidden: true
   },
@@ -49,8 +51,6 @@ export const constantRoutes = [
       component: () => import('@/views/import')
     }]
   },
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
 ]
 
 // 动态路由
@@ -69,7 +69,7 @@ export const asyncRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [...constantRoutes, ...asyncRoutes]  // 临时合并所有的路由
+  routes: [...constantRoutes]  // 临时合并所有的路由
 })
 
 const router = createRouter()

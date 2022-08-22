@@ -80,7 +80,6 @@ export default {
   methods: {
     async getPermissionList() {
       this.list = transListToTree(await getPermissionList(), '0')
-      console.log(this.list)
     },
     delPermission(id) {
       this.$confirm('确定要删除权限吗?').then(async () => {

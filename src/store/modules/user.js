@@ -89,7 +89,10 @@
 // }
 
 import { login , getUserInfo , getUserDetailById} from "@/api/user";
-import { getToken, removeToken, setToken ,setTimestamp} from "@/utils/auth";
+import { getToken, removeToken, setToken, setTimestamp } from "@/utils/auth";
+
+import { resetRouter } from '@/router';
+
 // 状态
 // 初始化的时候从缓存中读取状态 并赋值到初始化的状态上
 // Vuex 的持久化 如何实现 ？ Vuex 和前端缓存相结合
@@ -142,6 +145,15 @@ const actions = {
   logoutAction(context) {
     context.commit("removeToken")     // 删除 token
     context.commit("removeUserInfo")  // 删除 用户资料
+
+    resetRouter()  // 重置路由
+
+    // 还有一步  vuex中的数据是不是还在
+    // 要清空permission模块下的 state 数据 , 通过提交mutation 传入 空数组
+    // 那怎么在子模块中调用另一个子模块的 mutation ?
+    // { root:true }
+    context.commit('permission/setRoutes', [], { root: true })
+    // 子模块调用子模块的action 可以 将 commit的第三个参数 设置成  { root: true } 就表示当前的context不是子模块了 而是父模块
   }
 };
 
