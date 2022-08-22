@@ -1,17 +1,56 @@
-import Layout from '@/layout';
-// 每个子模块 其实 都是外层是layout  组件位于 layout 的二级路由里面
-export default {
-  path: "/salarys",
-  name: 'salarys',  // 这个 name 属性后面做权限时候会用到
+
+import Layout from '@/layout'
+
+const salaryRouter = {
+  path: '/salarys',
   component: Layout,
-  children: [{
-    path: '',  // 这里当二级路由的path什么都不写的时候 表示该路由为当前二级路由的默认路
-    component: () => import('@/views/salarys/index.vue'),
-    meta: {
-      title: "工资管理",
-      icon:'money'
-      // meta属性的里面的属性 随意定义 但是这里为什么要用title呢? ，
-      // 因为左侧导航会读取路由里的 meta 里面的 title 作为显示菜单名称
+  name: 'salarys',
+  children: [
+    {
+      path: '',
+      component: () => import('@/views/salarys'),
+      name: 'salarys',
+      meta: {
+        title: '工资',
+        icon: 'money'
+      }
+    },
+    {
+      path: 'setting',
+      component: () => import('@/views/salarys/setting'),
+      name: 'salarysSetting',
+      hidden: true,
+      meta: {
+        title: '设置'
+      }
+    },
+    {
+      path: 'details/:yearMonth/:id',
+      component: () => import('@/views/salarys/detail'),
+      name: 'salarysDetails',
+      hidden: true,
+      meta: {
+        title: '详情'
+      }
+    },
+    {
+      path: 'historicalArchiving',
+      component: () => import('@/views/salarys/historical'),
+      name: 'salarysHistorical',
+      hidden: true,
+      meta: {
+        title: '历史归档'
+      }
+    },
+    {
+      path: 'monthStatement',
+      component: () => import('@/views/salarys/month'),
+      name: 'salarysMonthStatement',
+      hidden: true,
+      meta: {
+        title: '月报表'
+      }
     }
-  }]
+  ]
 }
+export default salaryRouter
