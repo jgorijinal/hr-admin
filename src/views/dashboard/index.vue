@@ -5,11 +5,15 @@
       <div>
         <div class="fl headL">
           <div class="headImg">
-            <img :src="userInfo.staffPhoto" >
+            <img :src="userInfo.staffPhoto" />
           </div>
           <div class="headInfoTip">
-            <p class="firstChild">你好 , {{userInfo.username}} , 祝你开心每一天 !</p>
-            <p class="lastChild">艾伦科技有限公司 | {{userInfo.departmentName}}</p>
+            <p class="firstChild">
+              你好 , {{ userInfo.username }} , 祝你开心每一天 !
+            </p>
+            <p class="lastChild">
+              艾伦科技有限公司 | {{ userInfo.departmentName }}
+            </p>
           </div>
         </div>
         <div class="fr" />
@@ -18,44 +22,53 @@
     <!-- 主要内容 -->
     <el-row type="flex" justify="space-between">
       <!-- 左侧内容 -->
-      <el-col :span="13" style="padding-right:26px">
+      <el-col :span="13" style="padding-right: 26px">
         <!-- 工作日历 -->
         <el-card class="box-card">
           <div slot="header" class="header">
             <span>工作日历</span>
           </div>
-        <!-- 放置日历组件 -->
-        <work-calendar></work-calendar>
+          <!-- 放置日历组件 -->
+          <work-calendar></work-calendar>
         </el-card>
         <!-- 公告 -->
         <el-card class="box-card">
           <div class="advContent">
-            <div class="title"> 公告</div>
+            <div class="title">公告</div>
             <div class="contentItem">
               <ul class="noticeList">
                 <li>
                   <div class="item">
-                    <img src="@/assets/common/img.jpeg" alt="">
+                    <img src="@/assets/common/img.jpeg" alt="" />
                     <div>
-                      <p><span class="col">朱继柳</span> 发布了 第1期“传智大讲堂”互动讨论获奖名单公布</p>
+                      <p>
+                        <span class="col">朱继柳</span> 发布了
+                        第1期“传智大讲堂”互动讨论获奖名单公布
+                      </p>
                       <p>2018-07-21 15:21:38</p>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="item">
-                    <img src="@/assets/common/img.jpeg" alt="">
+                    <img src="@/assets/common/img.jpeg" alt="" />
                     <div>
-                      <p><span class="col">朱继柳</span> 发布了 第2期“传智大讲堂”互动讨论获奖名单公布</p>
+                      <p>
+                        <span class="col">朱继柳</span> 发布了
+                        第2期“传智大讲堂”互动讨论获奖名单公布
+                      </p>
                       <p>2018-07-21 15:21:38</p>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="item">
-                    <img src="@/assets/common/img.jpeg" alt="">
+                    <img src="@/assets/common/img.jpeg" alt="" />
                     <div>
-                      <p><span class="col">朱继柳</span> 发布了 第3期“传智大讲堂”互动讨论获奖名单公布</p>
+                      <p>
+                        <span class="col">朱继柳</span> 发布了
+                        第3期“传智大讲堂”互动讨论获奖名单公布
+                      </p>
                       <p>2018-07-21 15:21:38</p>
                     </div>
                   </div>
@@ -72,10 +85,10 @@
             <span>流程申请</span>
           </div>
           <div class="sideNav">
-            <el-button class="sideBtn">加班离职</el-button>
+            <el-button class="sideBtn" @click="showDialog = true">加班离职</el-button>
             <el-button class="sideBtn">请假调休</el-button>
-            <el-button class="sideBtn">审批列表</el-button>
-            <el-button class="sideBtn">我的信息</el-button>
+            <el-button class="sideBtn"  @click="$router.push('/users/approvals')">审批列表</el-button>
+            <el-button class="sideBtn"  @click="$router.push('/users/info')">我的信息</el-button>
           </div>
         </el-card>
 
@@ -84,7 +97,10 @@
           <div slot="header" class="header">
             <span>绩效指数</span>
           </div>
-        <!-- 放置雷达图 -->
+          <!-- 放置雷达图 -->
+          <el-row type="flex" justify="center">
+            <Radar />
+          </el-row>
         </el-card>
         <!-- 帮助连接 -->
         <el-card class="box-card">
@@ -116,26 +132,107 @@
         </el-card>
       </el-col>
     </el-row>
+    <!--el-dialog 弹窗-->
+    <el-dialog title="离职申请" :visible="showDialog" @close="btnCancel">
+      <el-form label-width="120px" ref="formRef" :rules="rules" :model="ruleForm">
+        <el-form-item label="类型">
+          <el-select
+            style="width: 30%"
+            placeholder="请选择"
+            v-model="ruleForm.processName"
+          >
+            <el-option label="离职" value="离职"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间" prop="exceptTime">
+          <el-date-picker
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="请选择事件"
+            style="width: 50%"
+            v-model="ruleForm.exceptTime"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="离职原因" prop="reason">
+          <el-input
+            type="textarea" placeholder="请输入离职原因" :rows="3" style="width: 50%" v-model="ruleForm.reason"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <!--footer 插槽-->
+      <template v-slot:footer>
+        <el-row type="flex" justify="center">
+          <el-button size="small" @click="btnCancel">取消</el-button>
+          <el-button size="small" type="primary" @click="btnOK">确定</el-button>
+        </el-row>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters, createNamespacedHelpers } from 'vuex'
-import WorkCalendar from './components/work-calendar.vue'
+import { mapGetters, createNamespacedHelpers } from "vuex";
+import WorkCalendar from "./components/work-calendar.vue";
+import Radar from "./components/radar.vue";
+import { startProcess } from '@/api/approvals';
 // user模块
-const { mapState } = createNamespacedHelpers("user")
+const { mapState } = createNamespacedHelpers("user");
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   components: {
-    WorkCalendar
+    WorkCalendar,
+    Radar,
   },
   computed: {
-    ...mapGetters([
-      'name'
-    ]),
-    ...mapState(['userInfo'])
-  }
-}
+    ...mapGetters(["name"]),
+    ...mapState(["userInfo"]),
+  },
+  data() {
+    return {
+      showDialog: false,
+      ruleForm: {
+        exceptTime: "",
+        reason: "",
+        processKey: "process_dimission", // 特定的审批
+        processName: "离职",
+      },
+      rules: {
+        exceptTime: [{ required: true, message: "离职时间不能为空" }],
+        reason: [{ required: true, message: "离职原因不能为空" }],
+      },
+    };
+  },
+  methods: {
+    btnOK() {
+      // 表单校验 , 如果成功
+      // 调发起审批流程接口 , 需要 userId
+      // 提示成功
+      // 关闭弹窗
+      this.$refs.formRef.validate( async isOK => {
+        if (isOK) {
+          const data = { ...this.ruleForm, userId: this.userInfo.userId }
+          console.log(data)
+          await startProcess(data)
+          this.$message.success("成功发起审批请求")
+          this.showDialog = false  // 会自动调 btnCancel()
+        }
+      })
+    },
+    btnCancel() {
+      // 重置表单
+      // 初始化数据
+      // 关闭弹窗
+      this.$refs.formRef.resetFields()
+      this.ruleForm = {
+        exceptTime: "",
+        reason: "",
+        processKey: "process_dimission", // 特定的审批
+        processName: "离职",
+      }
+      this.showDialog = false
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -150,7 +247,7 @@ export default {
     height: 100px;
     border-radius: 50%;
     background: #999;
-          img {
+    img {
       width: 100%;
       height: 100%;
       border-radius: 50%;
@@ -195,7 +292,7 @@ export default {
     }
   }
 }
-.header-card{
+.header-card {
   position: relative;
   .header {
     position: absolute;
@@ -219,7 +316,7 @@ export default {
     min-height: 350px;
     .item {
       display: flex;
-      padding:18px 0 10px;
+      padding: 18px 0 10px;
       border-bottom: solid 1px #ccc;
       .col {
         color: #8a97f8;
@@ -230,7 +327,7 @@ export default {
         border-radius: 50%;
         margin-right: 10px;
       }
-      p{
+      p {
         padding: 0 0 8px;
       }
     }
@@ -245,7 +342,7 @@ export default {
   padding: 30px 0 12px;
   .sideBtn {
     padding: 16px 26px;
-    font-size:16px;
+    font-size: 16px;
     margin: 10px 5px;
   }
 }
@@ -255,7 +352,7 @@ export default {
     display: inline-block;
     width: 76px;
     height: 76px;
-    background: url('./../../assets/common/icon.png') no-repeat;
+    background: url("./../../assets/common/icon.png") no-repeat;
   }
   .iconGuide {
     background-position: 0 0;
