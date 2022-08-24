@@ -1,6 +1,7 @@
 <template>
   <div class="navbar">
-    <hamburger
+    <div>
+<hamburger
       :is-active="sidebar.opened"
       class="hamburger-container"
       @toggleClick="toggleSideBar"
@@ -9,9 +10,12 @@
       艾伦科技有限公司
       <span class="breadBtn">体验版</span>
     </div>
+    </div>
+
     <!-- <breadcrumb class="breadcrumb-container" /> -->
 
     <div class="right-menu">
+      <theme-picker />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imageError="defaultImage"  :src="staffPhoto" class="user-avatar" />
@@ -75,6 +79,9 @@ export default {
   position: relative;
   background-image: -webkit-linear-gradient(left, #2e445e, #2e66aa);
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   .app-breadcrumb {
     display: inline-block;
     font-size: 18px;
@@ -114,21 +121,22 @@ export default {
   }
 
   .right-menu {
-    float: right;
-    height: 100%;
-    line-height: 50px;
-
+    display: flex;
+    justify-content: end;
+    // float: right;
+    // height: 100%;
+    // line-height: 50px;
+    align-items: center;
     &:focus {
       outline: none;
     }
-
     .right-menu-item {
       display: inline-block;
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
