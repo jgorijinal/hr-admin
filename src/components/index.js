@@ -3,6 +3,7 @@ import PageTools from "@/components/PageTools/index.vue";
 import UploadExcel from "@/components/UploadExcel/index.vue"
 import ImageUpload from "@/components/ImageUpload/index.vue"
 import ThemePicker from "@/components/ThemePicker/index.vue"
+import TagsView from "@/components/TagsView/index.vue"
 import Print from "vue-print-nb"
 export default {
   install(Vue) {
@@ -11,6 +12,7 @@ export default {
     Vue.component("UploadExcel", UploadExcel);
     Vue.component("ImageUpload", ImageUpload);
     Vue.component("ThemePicker", ThemePicker);
+    Vue.component("TagsView", TagsView);
     Vue.use(Print)
   },
 };
